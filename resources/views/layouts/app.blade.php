@@ -75,8 +75,8 @@
 
                 <a
                     href="{{ route('artigos.index') }}"
-                    class="nav-link active"
-                >
+                    class="nav-link {{ request()->routeIs('artigos.*') ? 'active' : '' }}"
+>
 
                     <i class="bi bi-newspaper"></i>
 
@@ -85,19 +85,26 @@
                 </a>
 
 
-                <a
-                    href="#"
-                    class="nav-link"
-                >
+                @if(auth()->user()->is_master)
 
-                    <i class="bi bi-people"></i>
+    <a
+        href="{{ route('usuarios.index') }}"
+        class="nav-link {{ request()->routeIs('usuarios.*') ? 'active' : '' }}"
+    >
 
-                    Usuários
+        <i class="bi bi-people"></i>
 
-                </a>
+        Usuários
+
+    </a>
+
+@endif
 
 
-                <a
+         <!--   Aba de configurações, inativa, para futuros upgrades
+
+
+         <a
                     href="#"
                     class="nav-link"
                 >
@@ -107,6 +114,34 @@
                     Configurações
 
                 </a>
+
+                -->
+
+                <div class="sidebar-logout"> 
+                    
+                
+
+    <form
+        action="{{ route('logout') }}"
+        method="POST"
+    >
+
+        @csrf
+
+        <button
+            type="submit"
+            class="nav-link logout-button"
+        >
+
+            <i class="bi bi-box-arrow-left"></i>
+
+            Sair
+
+        </button>
+
+    </form>
+
+</div>
 
 
             </nav>

@@ -1,12 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Gerenciar Artigos')
+@section('title', 'Artigos')
 
 @section('content')
-
-@php
-    use Illuminate\Support\Str;
-@endphp
 
 <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -23,8 +19,6 @@
     </div>
 
 
-    <!-- BOTÃO ADICIONAR -->
-
     <a
         href="{{ route('artigos.create') }}"
         class="btn btn-primary"
@@ -39,114 +33,84 @@
 </div>
 
 
-<!-- MENSAGEM DE SUCESSO -->
+{{-- MENSAGEM DE SUCESSO --}}
 
 @if(session('success'))
 
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success">
 
-        <i class="bi bi-check-circle me-2"></i>
+        <i class="bi bi-check-circle"></i>
 
         {{ session('success') }}
-
-        <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert">
-        </button>
 
     </div>
 
 @endif
 
 
-<!-- CARDS -->
+{{-- MENSAGEM DE ERRO --}}
 
-<div class="row g-3 mb-4">
+@if(session('error'))
 
-    <div class="col-md-4">
+    <div class="alert alert-danger">
 
-        <div class="card stat-card">
+        <i class="bi bi-exclamation-circle"></i>
 
-            <h6>
-                Total de artigos
-            </h6>
-
-            <h2>
-                {{ $artigos->count() }}
-            </h2>
-
-            <div class="stat-icon">
-
-                <i class="bi bi-file-text"></i>
-
-            </div>
-
-        </div>
+        {{ session('error') }}
 
     </div>
 
-
-    <div class="col-md-4">
-
-        <div class="card stat-card">
-
-            <h6>
-                Artigos ativos
-            </h6>
-
-            <h2>
-                {{ $artigos->where('status', true)->count() }}
-            </h2>
-
-            <div class="stat-icon">
-
-                <i class="bi bi-check-circle"></i>
-
-            </div>
-
-        </div>
-
-    </div>
+@endif
 
 
-    <div class="col-md-4">
+{{-- ERROS DE VALIDAÇÃO --}}
 
-        <div class="card stat-card">
+@if($errors->any())
 
-            <h6>
-                Artigos inativos
-            </h6>
+    <div class="alert alert-danger">
 
-            <h2>
-                {{ $artigos->where('status', false)->count() }}
-            </h2>
+        <strong>
+            Verifique os seguintes erros:
+        </strong>
 
-            <div class="stat-icon">
+        <ul class="mb-0 mt-2">
 
-                <i class="bi bi-eye-slash"></i>
+            @foreach($errors->all() as $erro)
 
-            </div>
+                <li>
+                    {{ $erro }}
+                </li>
 
-        </div>
+            @endforeach
+
+        </ul>
 
     </div>
 
-</div>
+@endif
 
 
-<!-- LISTA -->
+{{-- LISTA DE ARTIGOS --}}
 
 <div class="card">
 
     <div class="card-header d-flex justify-content-between align-items-center">
 
         <h5 class="mb-0">
+
+            <i class="bi bi-newspaper"></i>
+
             Artigos cadastrados
+
         </h5>
 
-        <span class="text-muted">
-            {{ $artigos->count() }} artigo(s)
+
+        <span class="badge bg-secondary">
+
+            {{ $artigos->count() }}
+
+            {{ $artigos->count() == 1 ? 'artigo' : 'artigos' }}
+
         </span>
 
     </div>
@@ -162,15 +126,29 @@
 
                     <tr>
 
-                        <th>ID</th>
+                        <th style="width: 70px;">
+                            ID
+                        </th>
 
-                        <th>Imagem</th>
+                        <th style="width: 100px;">
+                            Imagem
+                        </th>
 
-                        <th>Título</th>
+                        <th>
+                            Título
+                        </th>
 
-                        <th>Status</th>
+                        <th>
+                            Autor
+                        </th>
 
-                        <th>Data</th>
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Data
+                        </th>
 
                         <th class="text-end">
                             Ações
@@ -183,171 +161,257 @@
 
                 <tbody>
 
-                @forelse($artigos as $artigo)
+                    @forelse($artigos as $artigo)
 
-                    <tr>
+                        <tr>
 
-                        <!-- ID -->
+                            {{-- ID --}}
 
-                        <td>
-                            <strong>
-                                #{{ $artigo->id }}
-                            </strong>
-                        </td>
+                            <td>
 
+                                <span class="text-muted">
 
-                        <!-- IMAGEM -->
-
-                        <td>
-
-                            @if($artigo->imagem)
-
-                                <img
-                                    src="{{ asset('storage/' . $artigo->imagem) }}"
-                                    class="article-image"
-                                    alt="{{ $artigo->titulo }}"
-                                >
-
-                            @else
-
-                                <div class="article-no-image">
-
-                                    <i class="bi bi-image"></i>
-
-                                </div>
-
-                            @endif
-
-                        </td>
-
-
-                        <!-- TÍTULO -->
-
-                        <td>
-
-                            <strong>
-                                {{ $artigo->titulo }}
-                            </strong>
-
-                            <br>
-
-                            <small class="text-muted">
-
-                                {{ Str::limit($artigo->conteudo, 80) }}
-
-                            </small>
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            @if($artigo->status)
-
-                                <span class="badge badge-ativo">
-
-                                    <i class="bi bi-check-circle"></i>
-
-                                    Ativo
+                                    #{{ $artigo->id }}
 
                                 </span>
 
-                            @else
-
-                                <span class="badge badge-inativo">
-
-                                    <i class="bi bi-eye-slash"></i>
-
-                                    Inativo
-
-                                </span>
-
-                            @endif
-
-                        </td>
+                            </td>
 
 
-                        <!-- DATA -->
+                            {{-- IMAGEM --}}
 
-                        <td>
+                            <td>
 
-                            {{ $artigo->created_at->format('d/m/Y') }}
+                                @if($artigo->imagem)
 
-                        </td>
+                                    <img
+                                        src="{{ asset('storage/' . $artigo->imagem) }}"
+                                        alt="{{ $artigo->titulo }}"
+                                        style="
+                                            width: 70px;
+                                            height: 50px;
+                                            object-fit: cover;
+                                            border-radius: 8px;
+                                        "
+                                    >
+
+                                @else
+
+                                    <div
+                                        style="
+                                            width: 70px;
+                                            height: 50px;
+                                            border-radius: 8px;
+                                            background: #f1f1f1;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                        "
+                                    >
+
+                                        <i class="bi bi-image text-muted"></i>
+
+                                    </div>
+
+                                @endif
+
+                            </td>
 
 
-                        <!-- AÇÕES -->
+                            {{-- TÍTULO --}}
 
-                        <td class="text-end">
+                            <td>
 
-                            <!-- EDITAR -->
+                                <strong>
 
-                            <a
-                                href="{{ route('artigos.edit', $artigo->id) }}"
-                                class="btn btn-sm btn-warning"
-                                title="Editar artigo"
-                            >
+                                    {{ $artigo->titulo }}
 
-                                <i class="bi bi-pencil"></i>
-
-                            </a>
+                                </strong>
 
 
-                            <!-- EXCLUIR -->
+                                <div class="text-muted small">
 
-                            <form
-                                action="{{ route('artigos.destroy', $artigo->id) }}"
-                                method="POST"
-                                class="d-inline"
-                                onsubmit="return confirm('Tem certeza que deseja excluir este artigo?')"
-                            >
-
-                                @csrf
-
-                                @method('DELETE')
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-sm btn-danger"
-                                    title="Excluir artigo"
-                                >
-
-                                    <i class="bi bi-trash"></i>
-
-                                </button>
-
-                            </form>
-
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr>
-
-                        <td
-                            colspan="6"
-                            class="text-center py-5"
-                        >
-
-                            <div class="empty-state">
-
-                                <div class="empty-state-icon">
-
-                                    <i class="bi bi-newspaper"></i>
+                                    {{ Str::limit(
+                                        strip_tags($artigo->conteudo),
+                                        80
+                                    ) }}
 
                                 </div>
+
+                            </td>
+
+
+                            {{-- AUTOR --}}
+
+                            <td>
+
+                                @if($artigo->autor)
+
+                                    <div class="d-flex align-items-center">
+
+                                        <i
+                                            class="bi bi-person-circle me-2"
+                                            style="font-size: 22px;"
+                                        ></i>
+
+                                        <span>
+
+                                            {{ $artigo->autor->name }}
+
+                                        </span>
+
+                                    </div>
+
+                                @else
+
+                                    <span class="text-muted">
+
+                                        Não informado
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- STATUS --}}
+
+                            <td>
+
+                                @if($artigo->status)
+
+                                    <span class="badge bg-success">
+
+                                        <i class="bi bi-check-circle"></i>
+
+                                        Publicado
+
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-secondary">
+
+                                        <i class="bi bi-file-earmark"></i>
+
+                                        Rascunho
+
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- DATA --}}
+
+                            <td>
+
+                                <div>
+
+                                    {{ $artigo->created_at->format('d/m/Y') }}
+
+                                </div>
+
+                                <small class="text-muted">
+
+                                    {{ $artigo->created_at->format('H:i') }}
+
+                                </small>
+
+                            </td>
+
+
+                            {{-- AÇÕES --}}
+
+                            <td class="text-end">
+
+                                <div class="d-flex justify-content-end gap-1">
+
+                                    {{-- EDITAR --}}
+
+                                    <a
+                                        href="{{ route(
+                                            'artigos.edit',
+                                            $artigo->id
+                                        ) }}"
+                                        class="btn btn-sm btn-warning"
+                                        title="Editar artigo"
+                                    >
+
+                                        <i class="bi bi-pencil"></i>
+
+                                    </a>
+
+
+                                    {{-- EXCLUIR --}}
+
+                                    <form
+                                        action="{{ route(
+                                            'artigos.destroy',
+                                            $artigo->id
+                                        ) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                        onsubmit="return confirm(
+                                            'Deseja realmente excluir este artigo?'
+                                        )"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-danger"
+                                            title="Excluir artigo"
+                                        >
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center py-5"
+                            >
+
+                                <div class="mb-3">
+
+                                    <i
+                                        class="bi bi-newspaper"
+                                        style="font-size: 45px;"
+                                    ></i>
+
+                                </div>
+
 
                                 <h5>
                                     Nenhum artigo cadastrado
                                 </h5>
 
-                                <p>
-                                    Clique em "Novo artigo" para cadastrar.
+
+                                <p class="text-muted">
+
+                                    Comece criando seu primeiro artigo.
+
                                 </p>
+
 
                                 <a
                                     href="{{ route('artigos.create') }}"
@@ -356,17 +420,15 @@
 
                                     <i class="bi bi-plus-lg"></i>
 
-                                    Novo artigo
+                                    Criar primeiro artigo
 
                                 </a>
 
-                            </div>
+                            </td>
 
-                        </td>
+                        </tr>
 
-                    </tr>
-
-                @endforelse
+                    @endforelse
 
                 </tbody>
 

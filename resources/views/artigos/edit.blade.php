@@ -2,6 +2,37 @@
 
 @section('title', 'Editar Artigo')
 
+@section('styles')
+
+<link
+    href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+    rel="stylesheet"
+>
+
+<style>
+
+    #editor {
+        min-height: 400px;
+        font-size: 16px;
+    }
+
+    .ql-editor {
+        min-height: 400px;
+    }
+
+    .current-image {
+        max-width: 300px;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+</style>
+
+@endsection
+
+
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -41,6 +72,7 @@
             action="{{ route('artigos.update', $artigo->id) }}"
             method="POST"
             enctype="multipart/form-data"
+            id="articleForm"
         >
 
             @csrf
@@ -53,9 +85,7 @@
             <div class="mb-4">
 
                 <label class="form-label">
-
                     Título do artigo
-
                 </label>
 
                 <input
@@ -69,24 +99,21 @@
             </div>
 
 
-            <!-- IMAGEM ATUAL -->
+            <!-- IMAGEM PRINCIPAL -->
 
             @if($artigo->imagem)
 
                 <div class="mb-4">
 
                     <label class="form-label">
-
                         Imagem atual
-
                     </label>
 
                     <br>
 
                     <img
                         src="{{ asset('storage/' . $artigo->imagem) }}"
-                        class="image-preview"
-                        alt="Imagem atual"
+                        class="current-image"
                     >
 
                 </div>
@@ -94,14 +121,10 @@
             @endif
 
 
-            <!-- NOVA IMAGEM -->
-
             <div class="mb-4">
 
                 <label class="form-label">
-
-                    Alterar imagem
-
+                    Alterar imagem principal
                 </label>
 
                 <input
@@ -120,22 +143,27 @@
             </div>
 
 
-            <!-- CONTEÚDO -->
+            <!-- EDITOR -->
 
             <div class="mb-4">
 
                 <label class="form-label">
-
-                    Conteúdo
-
+                    Conteúdo do artigo
                 </label>
 
-                <textarea
+
+                <div>
+
+                    <div id="editor"></div>
+
+                </div>
+
+
+                <input
+                    type="hidden"
                     name="conteudo"
-                    class="form-control"
-                    rows="12"
-                    required
-                >{{ old('conteudo', $artigo->conteudo) }}</textarea>
+                    id="conteudo"
+                >
 
             </div>
 
@@ -173,8 +201,6 @@
             <hr>
 
 
-            <!-- BOTÕES -->
-
             <div class="d-flex justify-content-end gap-2 mt-4">
 
                 <a
@@ -205,5 +231,229 @@
     </div>
 
 </div>
+
+@endsection
+
+
+@section('scripts')
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+
+<script>
+
+const toolbarOptions = [
+
+    [
+        {
+            'header': [1, 2, 3, 4, 5, 6, false]
+        }
+    ],
+
+    [
+        'bold',
+        'italic',
+        'underline',
+        'strike'
+    ],
+
+    [
+        {
+            'list': 'ordered'
+        },
+        {
+            'list': 'bullet'
+        }
+    ],
+
+    [
+        {
+            'align': []
+        }
+    ],
+
+    [
+        'blockquote',
+        'link',
+        'image'
+    ],
+
+    [
+        'clean'
+    ]
+
+];
+
+
+const quill = new Quill('#editor', {
+
+    theme: 'snow',
+
+    placeholder: 'Digite o conteúdo do artigo...',
+
+    modules: {
+
+        toolbar: {
+
+            container: toolbarOptions,
+
+            handlers: {
+
+                image: imageHandler
+
+            }
+
+        }
+
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| CARREGAR CONTEÚDO EXISTENTE
+|--------------------------------------------------------------------------
+*/
+
+const conteudoExistente =
+    @json($artigo->conteudo ?? '');
+
+
+if (conteudoExistente) {
+
+    quill.clipboard.dangerouslyPasteHTML(
+        conteudoExistente
+    );
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| INSERIR IMAGEM
+|--------------------------------------------------------------------------
+*/
+
+function imageHandler() {
+
+    const input =
+        document.createElement('input');
+
+    input.setAttribute(
+        'type',
+        'file'
+    );
+
+    input.setAttribute(
+        'accept',
+        'image/*'
+    );
+
+    input.click();
+
+
+    input.onchange = async () => {
+
+        const file =
+            input.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            'image',
+            file
+        );
+
+        formData.append(
+            '_token',
+            '{{ csrf_token() }}'
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    '{{ route('artigos.uploadImage') }}',
+                    {
+                        method: 'POST',
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                alert(
+                    'Erro ao enviar a imagem.'
+                );
+
+                return;
+            }
+
+
+            const range =
+                quill.getSelection(true);
+
+
+            quill.insertEmbed(
+                range.index,
+                'image',
+                data.url
+            );
+
+
+            quill.setSelection(
+                range.index + 1
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                'Não foi possível enviar a imagem.'
+            );
+
+        }
+
+    };
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| ANTES DE SALVAR
+|--------------------------------------------------------------------------
+*/
+
+document
+    .getElementById('articleForm')
+    .addEventListener(
+        'submit',
+        function () {
+
+            document
+                .getElementById('conteudo')
+                .value =
+                quill.root.innerHTML;
+
+        }
+    );
+
+</script>
 
 @endsection

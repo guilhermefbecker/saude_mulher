@@ -2,6 +2,42 @@
 
 @section('title', 'Novo Artigo')
 
+@section('styles')
+
+<link
+    href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+    rel="stylesheet"
+>
+
+<style>
+
+    .editor-wrapper {
+        background: white;
+        border-radius: 8px;
+    }
+
+    #editor {
+        min-height: 400px;
+        font-size: 16px;
+    }
+
+    .ql-editor {
+        min-height: 400px;
+    }
+
+    .image-preview {
+        max-width: 300px;
+        max-height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+
+</style>
+
+@endsection
+
+
 @section('content')
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -41,6 +77,7 @@
             action="{{ route('artigos.store') }}"
             method="POST"
             enctype="multipart/form-data"
+            id="articleForm"
         >
 
             @csrf
@@ -51,9 +88,7 @@
             <div class="mb-4">
 
                 <label class="form-label">
-
                     Título do artigo
-
                 </label>
 
                 <input
@@ -68,14 +103,12 @@
             </div>
 
 
-            <!-- IMAGEM -->
+            <!-- IMAGEM PRINCIPAL -->
 
             <div class="mb-4">
 
                 <label class="form-label">
-
-                    Imagem
-
+                    Imagem principal
                 </label>
 
                 <input
@@ -103,18 +136,24 @@
             <div class="mb-4">
 
                 <label class="form-label">
-
-                    Conteúdo
-
+                    Conteúdo do artigo
                 </label>
 
-                <textarea
+
+                <div class="editor-wrapper">
+
+                    <div id="editor"></div>
+
+                </div>
+
+
+                <!-- CAMPO QUE SERÁ ENVIADO AO LARAVEL -->
+
+                <input
+                    type="hidden"
                     name="conteudo"
-                    class="form-control"
-                    rows="12"
-                    placeholder="Digite o conteúdo do artigo..."
-                    required
-                >{{ old('conteudo') }}</textarea>
+                    id="conteudo"
+                >
 
             </div>
 
@@ -150,8 +189,6 @@
 
             <hr>
 
-
-            <!-- BOTÕES -->
 
             <div class="d-flex justify-content-end gap-2 mt-4">
 
@@ -189,15 +226,179 @@
 
 @section('scripts')
 
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+
 <script>
+
+const toolbarOptions = [
+
+    [
+        {
+            'header': [1, 2, 3, 4, 5, 6, false]
+        }
+    ],
+
+    [
+        'bold',
+        'italic',
+        'underline',
+        'strike'
+    ],
+
+    [
+        {
+            'list': 'ordered'
+        },
+        {
+            'list': 'bullet'
+        }
+    ],
+
+    [
+        {
+            'align': []
+        }
+    ],
+
+    [
+        'blockquote',
+        'link',
+        'image'
+    ],
+
+    [
+        'clean'
+    ]
+
+];
+
+
+const quill = new Quill('#editor', {
+
+    theme: 'snow',
+
+    placeholder: 'Digite o conteúdo do artigo...',
+
+    modules: {
+
+        toolbar: {
+
+            container: toolbarOptions,
+
+            handlers: {
+
+                image: imageHandler
+
+            }
+
+        }
+
+    }
+
+});
+
+
+function imageHandler() {
+
+    const input = document.createElement('input');
+
+    input.setAttribute('type', 'file');
+
+    input.setAttribute('accept', 'image/*');
+
+    input.click();
+
+
+    input.onchange = async () => {
+
+        const file = input.files[0];
+
+        if (!file) {
+            return;
+        }
+
+
+        const formData = new FormData();
+
+        formData.append('image', file);
+
+        formData.append(
+            '_token',
+            '{{ csrf_token() }}'
+        );
+
+
+        try {
+
+            const response = await fetch(
+                '{{ route('artigos.uploadImage') }}',
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (!response.ok) {
+
+                alert('Erro ao enviar a imagem.');
+
+                return;
+            }
+
+
+            const range = quill.getSelection(true);
+
+
+            quill.insertEmbed(
+                range.index,
+                'image',
+                data.url
+            );
+
+
+            quill.setSelection(
+                range.index + 1
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert('Não foi possível enviar a imagem.');
+
+        }
+
+    };
+
+}
+
+
+document
+    .getElementById('articleForm')
+    .addEventListener('submit', function () {
+
+        document
+            .getElementById('conteudo')
+            .value = quill.root.innerHTML;
+
+    });
+
 
 document
     .getElementById('imagem')
     .addEventListener('change', function () {
 
-        const preview = document.getElementById('preview');
+        const preview =
+            document.getElementById('preview');
 
         preview.innerHTML = '';
+
 
         const arquivo = this.files[0];
 
@@ -206,11 +407,15 @@ document
         }
 
 
-        const imagem = document.createElement('img');
+        const imagem =
+            document.createElement('img');
 
-        imagem.src = URL.createObjectURL(arquivo);
+        imagem.src =
+            URL.createObjectURL(arquivo);
 
-        imagem.classList.add('image-preview');
+        imagem.classList.add(
+            'image-preview'
+        );
 
         preview.appendChild(imagem);
 

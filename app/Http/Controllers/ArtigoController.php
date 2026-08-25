@@ -9,11 +9,28 @@ use Illuminate\Support\Facades\Storage;
 class ArtigoController extends Controller
 {
     public function index()
-    {
-        $artigos = Artigo::latest()->get();
+{
+    $artigos = Artigo::with('autor')
+        ->latest()
+        ->get();
 
-        return view('artigos.index', compact('artigos'));
-    }
+    return view('artigos.index', compact('artigos'));
+}
+
+public function uploadImage(Request $request)
+{
+    $request->validate([
+        'image' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+    ]);
+
+    $path = $request
+        ->file('image')
+        ->store('artigos/conteudo', 'public');
+
+    return response()->json([
+        'url' => asset('storage/' . $path)
+    ]);
+}
 
 
     public function create()
@@ -35,6 +52,7 @@ class ArtigoController extends Controller
         $artigo->titulo = $request->titulo;
         $artigo->conteudo = $request->conteudo;
         $artigo->status = $request->has('status');
+        $artigo->user_id = auth()->id();
 
         if ($request->hasFile('imagem')) {
             $artigo->imagem = $request
