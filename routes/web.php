@@ -8,6 +8,17 @@ use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
+| PÁGINA INICIAL
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function () {
+    return redirect()->route('artigos.index');
+});
+
+
+/*
+|--------------------------------------------------------------------------
 | LOGIN
 |--------------------------------------------------------------------------
 */
@@ -45,9 +56,9 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::post('/artigos/upload-image', [
-    ArtigoController::class,
-    'uploadImage'
-])->name('artigos.uploadImage');
+        ArtigoController::class,
+        'uploadImage'
+    ])->name('artigos.uploadImage');
 
     Route::resource(
         'artigos',
