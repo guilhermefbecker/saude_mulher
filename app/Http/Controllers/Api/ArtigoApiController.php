@@ -7,10 +7,10 @@ use App\Models\Artigo;
 
 class ArtigoApiController extends Controller
 {
-    
     public function index()
     {
-        $artigos = Artigo::where('status', true)
+        $artigos = Artigo::with('autor')
+            ->where('status', true)
             ->latest()
             ->get()
             ->map(function ($artigo) {
@@ -26,11 +26,13 @@ class ArtigoApiController extends Controller
                         ? asset('storage/' . $artigo->imagem)
                         : null,
 
+                    'autor' => $artigo->autor
+                        ? $artigo->autor->name
+                        : null,
+
                     'data' => $artigo->created_at
                         ->format('d/m/Y'),
-
                 ];
-
             });
 
         return response()->json([
@@ -40,10 +42,10 @@ class ArtigoApiController extends Controller
     }
 
 
-    
     public function show($id)
     {
-        $artigo = Artigo::where('status', true)
+        $artigo = Artigo::with('autor')
+            ->where('status', true)
             ->find($id);
 
         if (!$artigo) {
@@ -52,7 +54,6 @@ class ArtigoApiController extends Controller
                 'success' => false,
                 'message' => 'Artigo não encontrado.'
             ], 404);
-
         }
 
 
@@ -71,9 +72,12 @@ class ArtigoApiController extends Controller
                     ? asset('storage/' . $artigo->imagem)
                     : null,
 
+                'autor' => $artigo->autor
+                    ? $artigo->autor->name
+                    : null,
+
                 'data' => $artigo->created_at
                     ->format('d/m/Y'),
-
             ]
         ]);
     }

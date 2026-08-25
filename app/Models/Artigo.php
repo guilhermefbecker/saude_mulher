@@ -10,11 +10,11 @@ class Artigo extends Model
     protected $table = 'artigos';
 
     protected $fillable = [
-        'titulo',
-        'conteudo',
-        'imagem',
-        'status',
-        'user_id',
+    'titulo',
+    'conteudo',
+    'imagem',
+    'status',
+    'user_id',
     ];
 
     protected $casts = [
@@ -25,4 +25,5 @@ class Artigo extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
 }
