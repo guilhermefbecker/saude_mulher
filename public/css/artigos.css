@@ -1,0 +1,551 @@
+/* ================================
+   CONFIGURAÇÕES GERAIS
+================================ */
+
+:root {
+    --rosa-principal: #d94f8a;
+    --rosa-claro: #fdf0f6;
+    --rosa-hover: #c63d78;
+    --roxo: #7b4b94;
+
+    --texto: #343434;
+    --texto-secundario: #777;
+
+    --fundo: #f8f8fb;
+    --branco: #ffffff;
+
+    --borda: #eeeeee;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    background-color: var(--fundo);
+    color: var(--texto);
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.sidebar {
+    min-height: 100vh;
+
+    background: linear-gradient(
+        180deg,
+        #8e477c 0%,
+        #703c78 100%
+    );
+
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.08);
+
+    position: sticky;
+
+    top: 0;
+
+    align-self: flex-start;
+}
+
+
+.sidebar-brand {
+    padding: 30px 25px;
+}
+
+
+.sidebar-brand h4 {
+    color: white;
+
+    font-weight: 700;
+
+    font-size: 21px;
+
+    margin: 0;
+}
+
+
+.sidebar-brand span {
+    display: block;
+
+    color: rgba(255, 255, 255, .7);
+
+    font-size: 13px;
+
+    margin-top: 5px;
+}
+
+
+.sidebar .nav {
+    padding: 10px 15px;
+}
+
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, .75);
+
+    padding: 13px 17px;
+
+    margin-bottom: 6px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    transition: .2s;
+}
+
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, .12);
+
+    color: white;
+}
+
+
+.sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, .18);
+
+    color: white;
+
+    font-weight: 600;
+}
+
+
+.sidebar .nav-link i {
+    width: 25px;
+}
+
+
+/* ================================
+   CONTEÚDO
+================================ */
+
+.content {
+    padding: 35px 40px;
+
+    min-height: 100vh;
+
+    background-color: #f8f8fb;
+}
+
+
+.page-title {
+    font-size: 28px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
+.page-subtitle {
+    color: var(--texto-secundario);
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   BOTÕES
+================================ */
+
+.btn-primary {
+    background-color: var(--rosa-principal);
+
+    border-color: var(--rosa-principal);
+
+    border-radius: 9px;
+
+    padding: 10px 18px;
+
+    font-weight: 600;
+}
+
+
+.btn-primary:hover {
+    background-color: var(--rosa-hover);
+
+    border-color: var(--rosa-hover);
+}
+
+
+.btn-secondary {
+    border-radius: 9px;
+}
+
+
+.btn-warning,
+.btn-danger {
+    border-radius: 7px;
+}
+
+
+/* ================================
+   CARDS
+================================ */
+
+.card {
+    border: none;
+
+    border-radius: 15px;
+
+    background-color: white;
+
+    box-shadow:
+        0 3px 20px rgba(0, 0, 0, .04);
+}
+
+
+.card-header {
+    background-color: white;
+
+    border-bottom: 1px solid var(--borda);
+
+    padding: 20px 24px;
+}
+
+
+/* ================================
+   CARDS DE ESTATÍSTICAS
+================================ */
+
+.stat-card {
+    padding: 22px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+.stat-card h6 {
+    color: var(--texto-secundario);
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+}
+
+
+.stat-card h2 {
+    margin: 8px 0 0;
+
+    font-size: 30px;
+
+    font-weight: 700;
+}
+
+
+.stat-icon {
+    position: absolute;
+
+    right: 20px;
+
+    top: 20px;
+
+    width: 45px;
+
+    height: 45px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background-color: var(--rosa-claro);
+
+    color: var(--rosa-principal);
+
+    font-size: 20px;
+}
+
+
+/* ================================
+   TABELA
+================================ */
+
+.table {
+    margin-bottom: 0;
+}
+
+
+.table thead th {
+    border-bottom: 1px solid var(--borda);
+
+    color: #777;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    padding: 15px 18px;
+}
+
+
+.table tbody td {
+    padding: 16px 18px;
+
+    border-bottom: 1px solid #f2f2f2;
+
+    vertical-align: middle;
+}
+
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.table tbody tr:hover {
+    background-color: #fff8fb;
+}
+
+
+/* ================================
+   IMAGEM DOS ARTIGOS
+================================ */
+
+.article-image {
+    width: 75px;
+
+    height: 55px;
+
+    object-fit: cover;
+
+    border-radius: 9px;
+
+    border: 1px solid #eee;
+}
+
+
+.article-no-image {
+    width: 75px;
+
+    height: 55px;
+
+    border-radius: 9px;
+
+    background-color: #f4f4f6;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #aaa;
+
+    font-size: 11px;
+}
+
+
+/* ================================
+   BADGES
+================================ */
+
+.badge {
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    font-weight: 500;
+}
+
+
+.badge-ativo {
+    background-color: #e8f8ef;
+
+    color: #239657;
+}
+
+
+.badge-inativo {
+    background-color: #eeeeee;
+
+    color: #777;
+}
+
+
+/* ================================
+   FORMULÁRIOS
+================================ */
+
+.form-label {
+    font-weight: 600;
+
+    font-size: 14px;
+
+    margin-bottom: 7px;
+}
+
+
+.form-control {
+    border: 1px solid #dedee5;
+
+    border-radius: 9px;
+
+    padding: 11px 13px;
+
+    font-size: 14px;
+}
+
+
+.form-control:focus {
+    border-color: var(--rosa-principal);
+
+    box-shadow:
+        0 0 0 3px rgba(217, 79, 138, .12);
+}
+
+
+textarea.form-control {
+    resize: vertical;
+
+    min-height: 250px;
+}
+
+
+/* ================================
+   SWITCH
+================================ */
+
+.form-check-input {
+    cursor: pointer;
+}
+
+
+.form-check-input:checked {
+    background-color: var(--rosa-principal);
+
+    border-color: var(--rosa-principal);
+}
+
+
+/* ================================
+   ALERTAS
+================================ */
+
+.alert {
+    border: none;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   PÁGINA VAZIA
+================================ */
+
+.empty-state {
+    text-align: center;
+
+    padding: 70px 20px;
+}
+
+
+.empty-state-icon {
+    width: 70px;
+
+    height: 70px;
+
+    margin: auto;
+
+    margin-bottom: 20px;
+
+    border-radius: 20px;
+
+    background-color: var(--rosa-claro);
+
+    color: var(--rosa-principal);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 28px;
+}
+
+
+.empty-state h5 {
+    font-weight: 700;
+}
+
+
+.empty-state p {
+    color: #888;
+
+    font-size: 14px;
+}
+
+
+/* ================================
+   PREVIEW DA IMAGEM
+================================ */
+
+.image-preview {
+    width: 220px;
+
+    height: 140px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    border: 1px solid #eee;
+
+    margin-top: 10px;
+}
+
+
+/* ================================
+   RESPONSIVIDADE
+================================ */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        min-height: auto;
+
+        position: relative;
+    }
+
+
+    .content {
+        padding: 25px 15px;
+    }
+
+
+    .page-title {
+        font-size: 23px;
+    }
+
+
+    .table {
+        min-width: 800px;
+    }
+
+}
