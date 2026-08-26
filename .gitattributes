@@ -5,6 +5,7 @@
 *.html diff=html
 *.md diff=markdown
 *.php diff=php
+docker/entrypoint.sh text eol=lf
 
 /.github export-ignore
 CHANGELOG.md export-ignore
