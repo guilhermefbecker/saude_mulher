@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ArtigoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Storage;
 
 
 /*
@@ -15,6 +16,23 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return redirect()->route('artigos.index');
 });
+
+Route::get('/imagem-artigo/{path}', function ($path) {
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return response($file)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        ->header('Access-Control-Allow-Headers', '*');
+
+})->where('path', '.*');
 
 
 /*
@@ -81,4 +99,7 @@ Route::middleware('auth')->group(function () {
 
     });
 
+    
+
 });
+

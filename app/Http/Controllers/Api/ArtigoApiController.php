@@ -23,8 +23,8 @@ class ArtigoApiController extends Controller
                     'conteudo' => $artigo->conteudo,
 
                     'imagem' => $artigo->imagem
-                        ? asset('storage/' . $artigo->imagem)
-                        : null,
+                    ? url('imagem-artigo/' . $artigo->imagem)
+                    : null,
 
                     'autor' => $artigo->autor
                         ? $artigo->autor->name
@@ -69,8 +69,8 @@ class ArtigoApiController extends Controller
                 'conteudo' => $artigo->conteudo,
 
                 'imagem' => $artigo->imagem
-                    ? asset('storage/' . $artigo->imagem)
-                    : null,
+                ? url('imagem-artigo/' . $artigo->imagem)
+                : null,
 
                 'autor' => $artigo->autor
                     ? $artigo->autor->name
